@@ -8,7 +8,7 @@ class Mimetype(models.Model):
         return '%s/%s' % (self.mimetype, self.subtype)
 
 class File(models.Model):
-    mimetype = models.ForeignKey(Mimetype, null = True)
+    mimetype = models.ForeignKey(Mimetype)
     filename = models.CharField(max_length = 250)
     content = models.TextField()
 

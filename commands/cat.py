@@ -5,6 +5,13 @@ import string
 from console.models import Mimetype, File
 
 class cat(object):
+    def format_text(self, output):
+        output = string.replace(output, '\n', '<br />')
+        output = string.replace(output, '    ', '&nbsp;&nbsp;&nbsp;&nbsp;')
+        output = string.replace(output, '\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
+
+        return output
+
     def execute(self, *args):
         # Mimetype can be set magically via a metaclass, derived classes
         # will only need to set a "property" or else have no mimetype
@@ -13,6 +20,6 @@ class cat(object):
         if mimetype and args[0]:
             try:
                 file = File.objects.get(filename=args[0])
-                yield string.replace(file.content, '\n', '<br />')
+                yield self.format_text(file.content)
             except File.DoesNotExist:
                 yield 'File \'%s\' not found' % args[0]
