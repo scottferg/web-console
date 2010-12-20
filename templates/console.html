@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script type="text/javascript">
+var command_buffer = []
+var command_index = 0;
+
+jQuery(document).keydown(function(event) {
+    console.log(event.keyCode);
+    switch(event.keyCode) {
+        case 38: /* up */
+            getPreviousCommand();
+            break;
+        case 40: /* down */
+            getNextCommand();
+            break;
+        case 13:
+            submitCommand();
+            break;
+    }
+});
+
+function getPreviousCommand() {
+    var command_line = jQuery('input[name="console-input"]').first();
+
+    if (command_index > 0) {
+        command_line.val(command_buffer[command_index - 1]);
+        command_index--;
+    }
+}
+
+function getNextCommand() {
+    var command_line = jQuery('input[name="console-input"]').first();
+
+    command_line.val(command_buffer[command_index + 1]);
+
+    if (command_index < command_buffer.length) {
+        command_index++;
+    }
+}
+
+function submitCommand() {
+    var command_line = jQuery('input[name="console-input"]').first();
+    var command = command_line.val();
+    var buffer = jQuery('div#main-content').first();
+
+    if (command == '') {
+        return;
+    }
+
+    command_buffer[command_index] = command;
+    command_index++;
+
+    jQuery.get('/submit/', {
+                action: command,
+                buffer: buffer.html()
+            },
+            function(response) {
+                buffer.html(response);
+                command_line.val('');
+            });
+}
+</script>
+
+<div id="main-content">
+Current login: {% now "D M j G:i:s O" %} on ttys001
+</div>
+<div id="console-input">
+{{ hostname|safe }}<input type="text" maxlength="250" value="" name="console-input" />
+</div>
+{% endblock %}

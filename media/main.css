@@ -1,0 +1,28 @@
+body {
+    font-family: courier, fixed, swiss, sans-serif;
+    font-size: 10pt;
+    background: #222;
+    color: #ddd;
+}
+
+input {
+    background: #222;
+    color: #ddd;
+    border: 1px solid #222;
+    width: 800px;
+    font-family: courier, fixed, swiss, sans-serif;
+    font-size: 10pt;
+    margin-left: 5px;
+}
+
+input:focus {
+    outline-width: 0;
+}
+
+div#console-input {
+    margin-top: -4px;
+}
+
+span.hostname {
+    color: #66cc66;
+}
