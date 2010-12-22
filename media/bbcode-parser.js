@@ -30,6 +30,7 @@ function parseBBCodes(input_text) {
         /\[url\](.*?)\[\/url\]/g,
         /\[email\](.*?)\[\/email\]/g,
         /\[b\](.*?)\[\/b\]/g,
+        /\[i\](.*?)\[\/i\]/g,
     ];
 
     var format = [
@@ -38,6 +39,7 @@ function parseBBCodes(input_text) {
         '<a href="$1">$1</a>',
         '<a href="mailto:$1">$1</a>',
         '<span style="font-weight: bold;">$1</span>',
+        '<span style="font-style: italic;">$1</span>',
     ];
 
     for (var index in re) {
