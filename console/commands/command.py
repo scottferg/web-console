@@ -24,7 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from django.db.models import Q
-from console.models import Mimetype
+from console.models import Mimetype, File
 
 import sys
 
@@ -49,6 +49,6 @@ class command(type):
         return type.__new__(meta, classname, bases, class_dict)
 
 def load_command(command):
-    __import__('console.commands.%s' % command, globals(), locals())
-    mod = sys.modules['console.commands.%s' % command]
+    __import__('console.commands.commands', globals(), locals())
+    mod = sys.modules['console.commands.commands']
     return getattr(mod, command)

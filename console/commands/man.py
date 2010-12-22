@@ -48,9 +48,14 @@ class man(object):
                 'message': 'No command specified',
             }
 
-        requested_command = command_mod.load_command(args[0])
-
-        return {
-            'type'   : 'content',
-            'message': '<br />' + requested_command.manpage,
-        }
+		try:
+			requested_command = command_mod.load_command(args[0])
+			return {
+				'type'   : 'content',
+				'message': requested_command.manpage,
+			}
+		except AttributeError:
+			return {
+				'type'   : 'content',
+				'message': 'Command %s does not exist' % args[0],
+			}

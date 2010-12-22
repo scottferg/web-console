@@ -83,7 +83,7 @@ Console.prototype.submitCommand = function() {
     var buffer = jQuery('div#main-content').first();
 
     if (command == '') {
-        this.appendResponse(buffer, '');
+        this.appendResponse(buffer, {'message': ''});
         return;
     }
 
@@ -118,11 +118,12 @@ Console.prototype.processResponse = function(buffer, response) {
 
 Console.prototype.appendResponse = function(buffer, response) {
     var buffer_content = buffer.html();
-    buffer_content += '<br />' + '<span class="hostname">' + this.hostname 
-        + '</span>&nbsp;' + this.command_line.val();
-    buffer_content += response.message;
 
-    buffer.html(parseBBCodes(buffer_content));
+    buffer_content += '<br /><span class="hostname">' + this.hostname 
+        + '</span>&nbsp;' + this.command_line.val();
+    buffer_content += parseBBCodes(response.message);
+
+    buffer.html(buffer_content);
 };
 
 Console.prototype.updateBuffer = function(buffer, response) {

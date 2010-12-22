@@ -50,7 +50,7 @@ def format_response(response):
     Pieces together the response message after washing it through several
     preliminary text/formatting filters
     '''
-    if response['message'][0:6] != '<br />':
+    if response['message'] and response['message'][0:6] != '<br />':
         response['message'] = '<br />' + response['message']
 
     response['message'] = string.replace(response['message'], '\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
@@ -79,7 +79,7 @@ def submit(request):
         command = command_class()
 
         result = simplejson.dumps(format_response(command.execute(*args)))
-    except ImportError:
+    except AttributeError:
         result = simplejson.dumps({
             'type'   : 'content',
             'message': '<br />' + '-bash: %s: command not found' % parsed_command[0],
