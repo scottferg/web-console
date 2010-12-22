@@ -97,8 +97,23 @@ Console.prototype.submitCommand = function() {
             'action': command,
         },
         function(response) {
-            that.appendResponse(buffer, response);
+            that.processResponse(buffer, response);
         });
+};
+
+Console.prototype.processResponse = function(buffer, response) {
+    switch (response.type) {
+        case 'content':
+            this.appendResponse(buffer, response);
+            break;  
+        case 'update':
+            this.updateBuffer(buffer, response);
+            break;
+    }
+
+    this.command_line.val('');
+
+    jQuery(document).scrollTop(jQuery(document).height());
 };
 
 Console.prototype.appendResponse = function(buffer, response) {
@@ -108,8 +123,8 @@ Console.prototype.appendResponse = function(buffer, response) {
     buffer_content += response.message;
 
     buffer.html(parseBBCodes(buffer_content));
+};
 
-    this.command_line.val('');
-
-    jQuery(document).scrollTop(jQuery(document).height());
+Console.prototype.updateBuffer = function(buffer, response) {
+    buffer.html(response.message);
 };
