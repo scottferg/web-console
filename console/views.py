@@ -31,6 +31,8 @@ from django.utils import simplejson
 from commands import command as command_mod
 from models import *
 
+import string
+
 INTRO_TEXT = """
 Welcome to ferg-console!<br /><br />
 
@@ -40,6 +42,21 @@ Some basic commands:<br />
 [color="orange"]clear - Clear the current console buffer[/color]<br /><br />
 
 """
+
+response_types = ['message',]
+
+def format_response(response):
+    '''
+    Pieces together the response message after washing it through several
+    preliminary text/formatting filters
+    '''
+    if response['message'][0:6] != '<br />':
+        response['message'] = '<br />' + response['message']
+
+    response['message'] = string.replace(response['message'], '\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
+    response['message'] = string.replace(response['message'], '\n', '<br />')
+
+    return response
 
 def parse_command(command):
     return command.split(' ')
@@ -61,7 +78,7 @@ def submit(request):
         args = parsed_command[1:]
         command = command_class()
 
-        result = simplejson.dumps(command.execute(*args))
+        result = simplejson.dumps(format_response(command.execute(*args)))
     except ImportError:
         result = simplejson.dumps({
             'type'   : 'content',

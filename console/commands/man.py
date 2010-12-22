@@ -26,8 +26,6 @@
 import command as command_mod
 from command import command
 
-import string
-
 class man(object):
     __metaclass__ = command
 
@@ -43,13 +41,6 @@ class man(object):
 	   NAME, SYNOPSIS (if applicable), and DESCRIPTION.
     '''
 
-    def format_text(self, output):
-        output = string.replace(output, ' ', '&nbsp;')
-        output = string.replace(output, '\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
-        output = string.replace(output, '\n', '<br />')
-
-        return output
-
     def execute(self, *args):
         if not args[0]:
             return {
@@ -61,5 +52,5 @@ class man(object):
 
         return {
             'type'   : 'content',
-            'message': '<br />' + self.format_text(requested_command.manpage),
+            'message': '<br />' + requested_command.manpage,
         }

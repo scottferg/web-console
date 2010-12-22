@@ -25,8 +25,6 @@
 
 from django.db.models import Q
 
-import string
-
 from console.models import Mimetype, File
 from command import command, MimetypeError
 
@@ -47,13 +45,6 @@ class cat(object):
        text base mimetype.  Honors BBCode styling for content.
     '''
 
-    def format_text(self, output):
-        output = string.replace(output, ' ', '&nbsp;')
-        output = string.replace(output, '\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
-        output = string.replace(output, '\n', '<br />')
-
-        return output
-
     def execute(self, *args):
         if args[0]:
             try:
@@ -62,7 +53,7 @@ class cat(object):
                 if not file.mimetype in self.mimetypes:
                     raise MimetypeError
 
-                message = self.format_text(file.content)
+                message = file.content
             except File.DoesNotExist:
                 message = '<br /> File \'%s\' not found' % args[0]
             except MimetypeError:
