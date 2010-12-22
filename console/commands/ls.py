@@ -30,5 +30,11 @@ class ls(object):
     __metaclass__ = command
 
     def execute(self, *args):
+        buffer = ''
         for file in File.objects.all():
-            yield file.filename
+            buffer = buffer + '<br />' + file.filename
+
+        return {
+            'type'   : 'content',
+            'message': buffer,
+        }

@@ -23,9 +23,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
-from django.contrib.auth.models import User
+from django.utils import simplejson
 
 import sys
 
@@ -39,9 +40,6 @@ Some basic commands:<br />
 [color="orange"]cat - Display the contents of a text-based file[/color]<br /><br />
 
 """
-def get_installed_commands():
-    __import__('console.commands', globals(), locals())
-    mod = sys.modules['console.commands']
 
 def parse_command(command):
     return command.split(' ')
@@ -67,12 +65,12 @@ def submit(request):
         command_class = load_command(parsed_command[0])
         args = parsed_command[1:]
         command = command_class()
+
+        result = simplejson.dumps(command.execute(*args))
     except ImportError:
-        return HttpResponse('<br />' + '-bash: %s: command not found' % parsed_command[0])
+        result = simplejson.dumps({
+            'type'   : 'content',
+            'message': '<br />' + '-bash: %s: command not found' % parsed_command[0],
+        })
 
-    buffer = ''
-
-    for result in command.execute(*args):
-        buffer = buffer + '<br />' + result
-
-    return HttpResponse(buffer)
+    return HttpResponse(result)

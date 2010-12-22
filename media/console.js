@@ -59,8 +59,7 @@ Console.prototype.initCommandline = function() {
 
         var buffer_content = jQuery(jQuery('div#main-content').first());
 
-        console.log(parseBBCodes(buffer_content.html()));
-        buffer_content.html(parser.fetchResult());
+        buffer_content.html(parseBBCodes(buffer_content.html()));
     });
 };
 
@@ -93,7 +92,7 @@ Console.prototype.submitCommand = function() {
 
     var that = this;
 
-    jQuery.post('/submit/', 
+    jQuery.getJSON('/submit/', 
         {
             'action': command,
         },
@@ -106,7 +105,7 @@ Console.prototype.appendResponse = function(buffer, response) {
     var buffer_content = buffer.html();
     buffer_content += '<br />' + '<span class="hostname">' + this.hostname 
         + '</span>&nbsp;' + this.command_line.val();
-    buffer_content += response
+    buffer_content += response.message;
 
     buffer.html(parseBBCodes(buffer_content));
 

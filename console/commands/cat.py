@@ -50,8 +50,13 @@ class cat(object):
                 if not file.mimetype in self.mimetypes:
                     raise MimetypeError
 
-                yield self.format_text(file.content)
+                message = self.format_text(file.content)
             except File.DoesNotExist:
-                yield 'File \'%s\' not found' % args[0]
+                message = '<br /> File \'%s\' not found' % args[0]
             except MimetypeError:
-                yield 'File is not a textfile'
+                message = '<br /> File is not a textfile'
+
+            return {
+                'type'   : 'content',
+                'message': message,
+            }
