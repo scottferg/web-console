@@ -36,9 +36,9 @@ class cat(object):
     mimetypes = ['text/plain',]
 
     def format_text(self, output):
-        output = string.replace(output, '\n', '<br />')
-        output = string.replace(output, '    ', '&nbsp;&nbsp;&nbsp;&nbsp;')
+        output = string.replace(output, ' ', '&nbsp;')
         output = string.replace(output, '\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
+        output = string.replace(output, '\n', '<br />')
 
         return output
 
