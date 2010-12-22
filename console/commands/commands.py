@@ -22,15 +22,17 @@
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-from command import command, MimetypeError
+
+from django.db.models import Q
+from console.models import Mimetype, File
+from command import command, MimetypeError, load_command
 
 class cat(object):
     __metaclass__ = command
 
     mimetypes = ['text/plain',]
 
-    manpage = '''
-    [b]NAME[/b]
+    manpage = '''[b]NAME[/b]
        cat -- Displays the contents of a file
 
     [b]SYNOPSIS[/b]
@@ -38,8 +40,7 @@ class cat(object):
 
     [b]DESCRIPTION[/b]
        Displays the contents of a text file. Works for all files with a
-       text base mimetype.  Honors BBCode styling for content.
-    '''
+       text base mimetype.  Honors BBCode styling for content.'''
 
     def execute(self, *args):
         if args[0]:
@@ -59,3 +60,67 @@ class cat(object):
                 'type'   : 'content',
                 'message': message,
             }
+
+class ls(object):
+    __metaclass__ = command
+
+    manpage = '''[b]NAME[/b]
+       ls -- List directory contents
+
+    [b]DESCRIPTION[/b]
+       Lists all files in the current directory. Directories will be
+       highlighted in blue.'''
+
+    def execute(self, *args):
+        buffer = ''
+        for file in File.objects.all():
+            buffer = buffer + '<br />' + file.filename
+
+        return {
+            'type'   : 'content',
+            'message': buffer,
+        }
+
+class man(object):
+    __metaclass__ = command
+
+    manpage = '''[b]NAME[/b]
+       man -- Displays the manpage for a specified command
+
+    [b]SYNOPSIS[/b]
+       man [command]
+
+    [b]DESCRIPTION[/b]
+       Displays this manpage for a specified command. Result will show
+       NAME, SYNOPSIS (if applicable), and DESCRIPTION.'''
+
+    def execute(self, *args):
+        if len(args) < 1:
+            return {
+                'type'   : 'content',
+                'message': 'No command specified',
+            }
+
+        try:
+            requested_command = load_command(args[0])
+            return {
+                'type'   : 'content',
+                'message': requested_command.manpage,
+            }
+        except AttributeError:
+            return {
+                'type'   : 'content',
+                'message': 'Command %s does not exist' % args[0],
+            }
+
+class clear(object):
+    __metaclass__ = command
+
+    manpage = '''[b]NAME[/b]
+       clear -- Clears the current buffer'''
+
+    def execute(self, *args):
+        return {
+            'type'   : 'update',
+            'message': '',
+        }
