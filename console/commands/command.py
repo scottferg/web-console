@@ -23,17 +23,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from django.conf.urls.defaults import *
-from django.contrib import admin
-from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Q
+from console.models import Mimetype
 
-admin.autodiscover()
+class MimetypeError(Exception):
+    def __str__(self):
+        return repr('')
 
-handler500 = 'djangotoolbox.errorviews.server_error'
+class command(type):
+    def __new__(meta, classname, bases, class_dict):
+        if class_dict.has_key('mimetypes'):
+            for index,mimetype in enumerate(class_dict['mimetypes']):
+                mimetype = mimetype.split('/')
+                mimetype = Mimetype.objects.get(Q(mimetype = mimetype[0]) & Q(subtype = mimetype[1]))
 
-urlpatterns = patterns('',
-    (r'^$', 'console.views.index'),
-    (r'^submit/$', 'console.views.submit'),
-
-    (r'^admin/', include(admin.site.urls)),
-)
+                class_dict['mimetypes'][index] = mimetype
+        else:
+            class_dict['mimetypes'] = []
+        return type.__new__(meta, classname, bases, class_dict)

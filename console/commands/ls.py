@@ -23,17 +23,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from django.conf.urls.defaults import *
-from django.contrib import admin
-from django.contrib.auth.forms import AuthenticationForm
+from console.models import File
+from command import command
 
-admin.autodiscover()
+class ls(object):
+    __metaclass__ = command
 
-handler500 = 'djangotoolbox.errorviews.server_error'
-
-urlpatterns = patterns('',
-    (r'^$', 'console.views.index'),
-    (r'^submit/$', 'console.views.submit'),
-
-    (r'^admin/', include(admin.site.urls)),
-)
+    def execute(self, *args):
+        for file in File.objects.all():
+            yield file.filename

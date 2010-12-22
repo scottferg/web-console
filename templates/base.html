@@ -3,7 +3,11 @@
     <head>
         <title>user@ferg-console</title>
         <script type="text/javascript" src="/media/jquery.js"></script>
+        {% block js_includes %}
+        {% endblock %}
         <link type="text/css" rel="stylesheet" href="/media/main.css" />
+        {% block css_includes %}
+        {% endblock %}
     </head>
     <body>
         {% block content %}

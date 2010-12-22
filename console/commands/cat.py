@@ -23,17 +23,35 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from django.conf.urls.defaults import *
-from django.contrib import admin
-from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Q
 
-admin.autodiscover()
+import string
 
-handler500 = 'djangotoolbox.errorviews.server_error'
+from console.models import Mimetype, File
+from command import command, MimetypeError
 
-urlpatterns = patterns('',
-    (r'^$', 'console.views.index'),
-    (r'^submit/$', 'console.views.submit'),
+class cat(object):
+    __metaclass__ = command
 
-    (r'^admin/', include(admin.site.urls)),
-)
+    mimetypes = ['text/plain',]
+
+    def format_text(self, output):
+        output = string.replace(output, '\n', '<br />')
+        output = string.replace(output, '    ', '&nbsp;&nbsp;&nbsp;&nbsp;')
+        output = string.replace(output, '\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
+
+        return output
+
+    def execute(self, *args):
+        if args[0]:
+            try:
+                file = File.objects.get(filename=args[0])
+
+                if not file.mimetype in self.mimetypes:
+                    raise MimetypeError
+
+                yield self.format_text(file.content)
+            except File.DoesNotExist:
+                yield 'File \'%s\' not found' % args[0]
+            except MimetypeError:
+                yield 'File is not a textfile'
