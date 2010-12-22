@@ -28,26 +28,21 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.utils import simplejson
 
-import sys
-
+from commands import command as command_mod
 from models import *
 
 INTRO_TEXT = """
 Welcome to ferg-console!<br /><br />
 
 Some basic commands:<br />
-[color="orange"]ls  - List contents of a directory[/color]<br />
-[color="orange"]cat - Display the contents of a text-based file[/color]<br /><br />
+[color="orange"]ls    - List contents of a directory[/color]<br />
+[color="orange"]cat   - Display the contents of a text-based file[/color]<br />
+[color="orange"]clear - Clear the current console buffer[/color]<br /><br />
 
 """
 
 def parse_command(command):
     return command.split(' ')
-
-def load_command(command):
-    __import__('console.commands.%s' % command, globals(), locals())
-    mod = sys.modules['console.commands.%s' % command]
-    return getattr(mod, command)
 
 def index(request):
     return render_to_response('console.html',
@@ -62,7 +57,7 @@ def submit(request):
     parsed_command = parse_command(action)
 
     try:
-        command_class = load_command(parsed_command[0])
+        command_class = command_mod.load_command(parsed_command[0])
         args = parsed_command[1:]
         command = command_class()
 

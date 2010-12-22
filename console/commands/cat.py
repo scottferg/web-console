@@ -35,6 +35,18 @@ class cat(object):
 
     mimetypes = ['text/plain',]
 
+    manpage = '''
+    [b]NAME[/b]
+       cat -- Displays the contents of a file
+
+    [b]SYNOPSIS[/b]
+       cat [file]
+
+    [b]DESCRIPTION[/b]
+       Displays the contents of a text file. Works for all files with a
+       text base mimetype.  Honors BBCode styling for content.
+    '''
+
     def format_text(self, output):
         output = string.replace(output, ' ', '&nbsp;')
         output = string.replace(output, '\t', '&nbsp;&nbsp;&nbsp;&nbsp;')

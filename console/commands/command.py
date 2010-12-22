@@ -26,12 +26,17 @@
 from django.db.models import Q
 from console.models import Mimetype
 
+import sys
+
 class MimetypeError(Exception):
     def __str__(self):
         return repr('')
 
 class command(type):
     def __new__(meta, classname, bases, class_dict):
+        if not class_dict.has_key('manpage'):
+			class_dict['manpage'] = 'No man page entry for this command.'
+
         if class_dict.has_key('mimetypes'):
             for index,mimetype in enumerate(class_dict['mimetypes']):
                 mimetype = mimetype.split('/')
@@ -40,4 +45,10 @@ class command(type):
                 class_dict['mimetypes'][index] = mimetype
         else:
             class_dict['mimetypes'] = []
+
         return type.__new__(meta, classname, bases, class_dict)
+
+def load_command(command):
+    __import__('console.commands.%s' % command, globals(), locals())
+    mod = sys.modules['console.commands.%s' % command]
+    return getattr(mod, command)

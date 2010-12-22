@@ -23,27 +23,43 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from console.models import File
+import command as command_mod
 from command import command
 
-class ls(object):
+import string
+
+class man(object):
     __metaclass__ = command
 
     manpage = '''
     [b]NAME[/b]
-       ls -- List directory contents
+       man -- Displays the manpage for a specified command
+
+    [b]SYNOPSIS[/b]
+       man [command]
 
     [b]DESCRIPTION[/b]
-       Lists all files in the current directory. Directories will be
-       highlighted in blue.
+       Displays this manpage for a specified command. Result will show
+	   NAME, SYNOPSIS (if applicable), and DESCRIPTION.
     '''
 
+    def format_text(self, output):
+        output = string.replace(output, ' ', '&nbsp;')
+        output = string.replace(output, '\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
+        output = string.replace(output, '\n', '<br />')
+
+        return output
+
     def execute(self, *args):
-        buffer = ''
-        for file in File.objects.all():
-            buffer = buffer + '<br />' + file.filename
+        if not args[0]:
+            return {
+                'type'   : 'content',
+                'message': 'No command specified',
+            }
+
+        requested_command = command_mod.load_command(args[0])
 
         return {
             'type'   : 'content',
-            'message': buffer,
+            'message': '<br />' + self.format_text(requested_command.manpage),
         }
