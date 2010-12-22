@@ -55,6 +55,10 @@ a:hover {
     text-decoration: underline;
 }
 
+div#main-content {
+    width: 1024px;
+}
+
 div#console-input {
     margin-top: -4px;
 }
@@ -69,4 +73,16 @@ span.blue-text {
 
 span.orange-text {
     color: #ffcc66;
+}
+
+span.red-text {
+    color: #cc3333;
+}
+
+span.yellow-text {
+    color: #ffff99;
+}
+
+span.green-text {
+    color: #6699cc;
 }
