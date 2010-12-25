@@ -34,13 +34,13 @@ from models import *
 import string
 
 INTRO_TEXT = """
-Welcome to ferg-console!<br /><br />
+Logged into %s<br /><br />
 
 Some basic commands:<br />
 [color="orange"]ls    - List contents of a directory[/color]<br />
 [color="orange"]cat   - Display the contents of a text-based file[/color]<br />
-[color="orange"]clear - Clear the current console buffer[/color]<br /><br />
-
+[color="orange"]clear - Clear the current console buffer[/color]<br />
+[color="orange"]man   - View the manpage for a specific command[/color]<br /><br />
 """
 
 response_types = ['message',]
@@ -65,7 +65,7 @@ def index(request):
     return render_to_response('console.html',
         {
             'hostname': Hostname(request.META['SERVER_NAME'])(),
-            'intro_text': INTRO_TEXT,
+            'intro_text': INTRO_TEXT % request.META['SERVER_NAME'],
         })
 
 def submit(request):
